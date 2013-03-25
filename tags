@@ -1,0 +1,104 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BinOpNode	bakparser.scala	/^case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNode {$/;"	r
+BinOpNode	parser.scala	/^case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNode {$/;"	r
+Litteral	bakparser.scala	/^  def varLitteral = variable ^^ {x => VariableNode(x)}$/;"	v
+Litteral	parser.scala	/^  def varLitteral = variable ^^ {x => VariableNode(x)}$/;"	v
+Main	Main.scala	/^object Main {$/;"	o
+MathLexer	bakparser.scala	/^class MathLexer extends RegexParsers {$/;"	c
+MathLexer	parser.scala	/^class MathLexer extends RegexParsers {$/;"	c
+MathNode	bakparser.scala	/^abstract class MathNode {$/;"	a
+MathNode	parser.scala	/^abstract class MathNode {$/;"	a
+NumeralNode	bakparser.scala	/^case class NumeralNode(value: Int) extends MathNode {$/;"	r
+NumeralNode	parser.scala	/^case class NumeralNode(value: Int) extends MathNode {$/;"	r
+Term	rep.scala	/^class Term(variable: String, coefficient: Int, exponent: Int) {$/;"	c
+VariableNode	bakparser.scala	/^case class VariableNode(value: String) extends MathNode {$/;"	r
+VariableNode	parser.scala	/^case class VariableNode(value: String) extends MathNode {$/;"	r
+apply	bakparser.scala	/^  def apply(input: String): MathNode = parse(expr, input) match {$/;"	m
+apply	parser.scala	/^  def apply(input: String): MathNode = parse(expr, input) match {$/;"	m
+applyLex	bakparser.scala	/^  def applyLex(input: String): List[String] = parse(exprLex, input) match {$/;"	m
+applyLex	parser.scala	/^  def applyLex(input: String): List[String] = parse(exprLex, input) match {$/;"	m
+binary	bakparser.scala	/^  def binary(level: Int): Parser[MathNode] = $/;"	m
+binary	parser.scala	/^  def binary(level: Int): Parser[MathNode] = $/;"	m
+binaryOp	bakparser.scala	/^  def binaryOp(level: Int): Parser[((MathNode, MathNode) => MathNode)] = {$/;"	m
+binaryOp	parser.scala	/^  def binaryOp(level: Int): Parser[((MathNode, MathNode) => MathNode)] = {$/;"	m
+closeParens	bakparser.scala	/^  def closeParens: Parser[String] = regex(new Regex("[\/)]"))  \/\/ "$/;"	m
+closeParens	parser.scala	/^  def closeParens: Parser[String] = regex(new Regex("[\/)]"))  \/\/ "$/;"	m
+com.parser	Main.scala	/^package com.parser$/;"	p
+eurVariables	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = $/;"	V
+eurVariables	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = value.toDouble$/;"	V
+eurVariables	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = { $/;"	V
+eurVariables	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]): Double$/;"	V
+eurVariables	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = $/;"	V
+eurVariables	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = value.toDouble$/;"	V
+eurVariables	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = { $/;"	V
+eurVariables	parser.scala	/^  def eval(valeurVariables: Map[String, Double]): Double$/;"	V
+eval	bakparser.scala	/^  def eval(): Double = eval(Map())$/;"	m
+eval	bakparser.scala	/^  def eval(): Double$/;"	m
+eval	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = $/;"	m
+eval	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = value.toDouble$/;"	m
+eval	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]) = { $/;"	m
+eval	bakparser.scala	/^  def eval(valeurVariables: Map[String, Double]): Double$/;"	m
+eval	parser.scala	/^  def eval(): Double = eval(Map())$/;"	m
+eval	parser.scala	/^  def eval(): Double$/;"	m
+eval	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = $/;"	m
+eval	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = value.toDouble$/;"	m
+eval	parser.scala	/^  def eval(valeurVariables: Map[String, Double]) = { $/;"	m
+eval	parser.scala	/^  def eval(valeurVariables: Map[String, Double]): Double$/;"	m
+expr	bakparser.scala	/^  def expr = binary(minPrec) | term$/;"	m
+expr	parser.scala	/^  def expr = binary(minPrec) | term$/;"	m
+exprLex	bakparser.scala	/^  def exprLex = rep(number | variable | operator)$/;"	m
+exprLex	parser.scala	/^  def exprLex = rep(number | variable | operator)$/;"	m
+getTerm	rep.scala	/^def getTerm(terme: MathNode): Term = terme match {$/;"	m
+getTerms	rep.scala	/^def getTerms(liste: List[MathNode]): List[Terms] = liste.foldLeft(List()) {$/;"	m
+iable	bakparser.scala	/^  def variable: Parser[String] = regex(new Regex("[a-z]")) \/\/ "$/;"	v
+iable	parser.scala	/^  def variable: Parser[String] = regex(new Regex("[a-z]")) \/\/ "$/;"	v
+iable	rep.scala	/^class Term(variable: String, coefficient: Int, exponent: Int) {$/;"	v
+java.util.regex.Pattern	bakparser.scala	/^import java.util.regex.Pattern$/;"	i
+java.util.regex.Pattern	parser.scala	/^import java.util.regex.Pattern$/;"	i
+leftEval	bakparser.scala	/^    val leftEval = left.eval(valeurVariables)$/;"	V
+leftEval	parser.scala	/^    val leftEval = left.eval(valeurVariables)$/;"	V
+litteral	bakparser.scala	/^  def litteral = number ^^ {x => NumeralNode(x.toInt)}$/;"	m
+litteral	parser.scala	/^  def litteral = number ^^ {x => NumeralNode(x.toInt)}$/;"	m
+main	Main.scala	/^	def main(args: Array[String]) {$/;"	m
+math.{pow, sqrt, cbrt}	bakparser.scala	/^import math.{pow, sqrt, cbrt}$/;"	i
+math.{pow, sqrt, cbrt}	parser.scala	/^import math.{pow, sqrt, cbrt}$/;"	i
+maxPrec	bakparser.scala	/^  val maxPrec = 3$/;"	V
+maxPrec	parser.scala	/^  val maxPrec = 3$/;"	V
+minPrec	bakparser.scala	/^  val minPrec = 1$/;"	V
+minPrec	parser.scala	/^  val minPrec = 1$/;"	V
+number	bakparser.scala	/^  def number: Parser[String] = regex(new Regex("[0-9]+")) \/\/ " $/;"	m
+number	parser.scala	/^  def number: Parser[String] = regex(new Regex("[0-9]+")) \/\/ " $/;"	m
+openParens	bakparser.scala	/^  def openParens: Parser[String] = regex(new Regex("[\/(]"))  \/\/" $/;"	m
+openParens	parser.scala	/^  def openParens: Parser[String] = regex(new Regex("[\/(]"))  \/\/" $/;"	m
+operator	bakparser.scala	/^  def operator: Parser[String] = regex(new Regex("[\/*\/^\/\/+-]")) | "rt"  \/\/"$/;"	m
+operator	parser.scala	/^  def operator: Parser[String] = regex(new Regex("[\/*\/^\/\/+-]")) | "rt"  \/\/"$/;"	m
+p	bakparser.scala	/^object p extends MathLexer {$/;"	o
+p	parser.scala	/^object p extends MathLexer {$/;"	o
+parens	bakparser.scala	/^  def parens: Parser[MathNode] = openParens ~> expr <~ closeParens$/;"	m
+parens	parser.scala	/^  def parens: Parser[MathNode] = openParens ~> expr <~ closeParens$/;"	m
+rightEval	bakparser.scala	/^    val rightEval = right.eval(valeurVariables)$/;"	V
+rightEval	parser.scala	/^    val rightEval = right.eval(valeurVariables)$/;"	V
+scala.util.matching.Regex	bakparser.scala	/^import scala.util.matching.Regex$/;"	i
+scala.util.matching.Regex	parser.scala	/^import scala.util.matching.Regex$/;"	i
+scala.util.parsing.combinator.RegexParsers	bakparser.scala	/^import scala.util.parsing.combinator.RegexParsers$/;"	i
+scala.util.parsing.combinator.RegexParsers	parser.scala	/^import scala.util.parsing.combinator.RegexParsers$/;"	i
+term	bakparser.scala	/^  def term = value | parens$/;"	m
+term	parser.scala	/^  def term = value | parens$/;"	m
+ue	bakparser.scala	/^  def value = litteral | varLitteral$/;"	V
+ue	bakparser.scala	/^case class NumeralNode(value: Int) extends MathNode {$/;"	V
+ue	bakparser.scala	/^case class VariableNode(value: String) extends MathNode {$/;"	V
+ue	parser.scala	/^  def value = litteral | varLitteral$/;"	V
+ue	parser.scala	/^case class NumeralNode(value: Int) extends MathNode {$/;"	V
+ue	parser.scala	/^case class VariableNode(value: String) extends MathNode {$/;"	V
+value	bakparser.scala	/^  def value = litteral | varLitteral$/;"	m
+value	parser.scala	/^  def value = litteral | varLitteral$/;"	m
+varLitteral	bakparser.scala	/^  def varLitteral = variable ^^ {x => VariableNode(x)}$/;"	m
+varLitteral	parser.scala	/^  def varLitteral = variable ^^ {x => VariableNode(x)}$/;"	m
+variable	bakparser.scala	/^  def variable: Parser[String] = regex(new Regex("[a-z]")) \/\/ "$/;"	m
+variable	parser.scala	/^  def variable: Parser[String] = regex(new Regex("[a-z]")) \/\/ "$/;"	m
+walker	rep.scala	/^def walker(tree: MathNode): List[MathNode] = tree match {$/;"	m

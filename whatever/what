@@ -1,0 +1,14 @@
+// package com.parser
+import scala.util.parsing.combinator._
+
+class Arith extends JavaTokenParsers {
+	def expr: Parser[Any] = term~rep("+"~term |"-"~term)
+	def term: Parser[Any] = factor~rep("*"~term |"/"~term)
+	def factor: Parser[Any] = floatingPointNumber |"("~expr~")"
+}
+
+object ParseExpr extends Arith {
+	def parse(arg: String) {
+		println(parseAll(expr, arg))
+	}
+}
