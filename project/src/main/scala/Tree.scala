@@ -2,9 +2,12 @@ package parsing
 
 class LNode[T](val value: T, cons: Option[LNode[T]]) {
   override def toString = "(" + this.lfoldr("", {(x: T, y: String) => x.toString + ", " + y}) + ")"
-  def toString2 = "LNode wtf"
+  def toString2 = this.lfoldr("", {(x: T, y: String) => x.toString + ", " + y})
   def lmap[A](f: (T) => A): LNode[A] = cons match { case Some(x) => new LNode(f(value), Some(x.lmap(f))) case None => new LNode(f(value), None) }
   def lfoldr[A](accu: A, f: (T, A) => A): A = cons match { case Some(x) => f(value, x.lfoldr(accu, f)) case None => f(value, accu) }
+  def append(toAppend: LNode[T]): LNode[T] = cons match { 
+    case Some(x) => new LNode(value, Some(x.append(toAppend))) 
+    case None => new LNode(value, Some(toAppend)) }
 }
 
 object LNode {
@@ -14,6 +17,7 @@ object LNode {
 }
 
 abstract class Tree[T] {
+  
   def toString2 = "tree wtf"
   def map[A](f: (T) => A): Tree[A]
   def foldFlat[A](accu: A)(fun: (A, T) => A): A
@@ -25,6 +29,7 @@ abstract class Tree[T] {
 }
 
 case class Nill[T] extends Tree[T] {
+
   override def toString = ""
   override def toString2 = "Nill wtf"
   def map[A](f: (T) => A) = new Nill[A]
@@ -37,7 +42,8 @@ case class Nill[T] extends Tree[T] {
 }
 
 case class NNode[T](val value: T, cons: LNode[Tree[T]]) extends Tree[T] {
-  override def toString = "NNode( " + value.toString + "): " + cons.toString
+
+  override def toString = "[ " + value.toString + " " + cons.toString2 + "]"
   override def toString2 = "NNode wtf"
   def map[A](f: (T) => A) = NNode(f(value), cons.lmap(_.map(f)))
   def foldFlat[A](accu: A)(fun: (A, T) => A) = accu // a reparer
@@ -47,12 +53,13 @@ case class NNode[T](val value: T, cons: LNode[Tree[T]]) extends Tree[T] {
 }
 
 case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
+
 //  override def toString = "Node(" + value.toString + ", " + left.toString + ", " + right.toString + ")"
   override def toString2 = "Node wtf"
   override def toString = this match {
-    case Node(value, a: Node[T], b: Node[T]) => "Node(" + value.toString + ", " + a.toString + ", " + b.toString + ")"
-    case Node(value, a: Node[T], b: Nill[T]) => "Node(" + value.toString + ", " + a.toString + ")"
-    case Node(value, b: Nill[T], a: Node[T]) => "Node(" + value.toString + ", " + a.toString + ")"
+    case Node(value, a: Node[T], b: Node[T]) => "(" + value.toString + ", " + a.toString + ", " + b.toString + ")"
+    case Node(value, a: Node[T], b: Nill[T]) => "(" + value.toString + ", " + a.toString + ")"
+    case Node(value, b: Nill[T], a: Node[T]) => "(" + value.toString + ", " + a.toString + ")"
     case Node(value, a: Nill[T], b: Nill[T]) => value.toString
     case Node(a, b, c) => a + ", " + b + ", " + c
     case _ => "Node case wtf"
@@ -67,6 +74,8 @@ case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] 
 //  def fold[A](accu: A, fun: (T, LNode[A]) => A) = fun(value, LNode(left.fold(accu, fun),  
   def twoFold[A](accu: A, fun: (T, A, A) => A) = fun (value, left.twoFold(accu, fun), right.twoFold(accu, fun))
 }
+
+  
 
 
 /*
