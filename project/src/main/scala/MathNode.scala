@@ -55,6 +55,9 @@ case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNo
 //  def toString2 = 
 //    "bop(" + op + " " + left.toString2 + " " + right.toString2 + ")"
 //  def toString3 = "(  " + op + "  )"
+
+  def this(value: String) = this(NullNode, NullNode, value)
+
   def toQueue(level: Int, shift: Int) = (this, level, shift) :: left.toQueue(level + 1, shift - 1) ::: right.toQueue(level + 1, shift + 1)
   def toTree = Node[MathNode](BinOpNode(null, null, op), left.toTree, right.toTree)
 
@@ -77,7 +80,7 @@ case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNo
   def eval(): Double = eval(Map())
   def toFlatten(x: MathNode) = x match {
     
-    case BinOpNode(_, _, lop) if ((op == "+")|(op == "-")) & ((lop == "+")|(lop == "-")) => (true, ((op == "+"), (lop == "+")))
+    case BinOpNode(_, _, lop) if ((op == "+")|(op == "-")) & ((lop == "+")|(lop == "-")) => (true, ((op == "-"), (lop == "-")))
 //    case BinOpNode(_, _, lop) if ((op == "+") && (lop == "+")) => (true, (false, false))
 //    case BinOpNode(_, _, lop) if ((op == "-") && (lop == "+")) => (true, (false, true))
 //    case BinOpNode(_, _, lop) if ((op == "+") && (lop == "-")) => (true, (true, false))

@@ -31,6 +31,9 @@ case class NNode[T](val value: T, cons: LNode[Tree[T]]) extends Tree[T] {
 
 case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
 
+  def this(value: T) = this(value, Nill, Nill)
+  def this(value: T, left: Tree[T]) = this(value, left, Nill)
+
   override def toString2 = "Node wtf"
   override def toString = this match {
     case Node(value, a: Node[T], b: Node[T]) => "(" + value.toString + ", " + a.toString + ", " + b.toString + ")"
@@ -40,8 +43,6 @@ case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] 
     case Node(a, b, c) => a + ", " + b + ", " + c
     case _ => "Node case wtf"
   }
-  def this(value: T) = this(value, Nill, Nill)
-  def this(value: T, left: Tree[T]) = this(value, left, Nill)
   def map[A](f: (T) => A): Node[A] = new Node(f(value), left.map(f), right.map(f))
   def foldFlat[A](accu: A)(fun: (A, T) => A): A = right.foldFlat(left.foldFlat(fun(accu, value))(fun))(fun)
   def fold[A](accu: A, fun: (T, LNode[A]) => A) = fun (value, LNode(left.fold(accu, fun), LNode(right.fold(accu, fun))))

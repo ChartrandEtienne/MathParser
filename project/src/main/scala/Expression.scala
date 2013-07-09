@@ -2,7 +2,17 @@ package parsing
 
 class Expression(val expr: Tree[MathNode]) {
   override def toString = expr.toString
-  def negate = this
+  def negate = {
+    def rec(tree: Tree[MathNode]): Tree[MathNode] = tree match {
+      case Nill => tree
+      case node @ Node(value, left, right) => value match {
+        case NumeralNode(x) => new Node(NumeralNode(0 - x))
+        case x: MathNode => Node(new BinOpNode("*"), new Node(NumeralNode(-1)), node)
+      }
+      case x: NNode[MathNode] => new Node(new BinOpNode("*"), new Node(NumeralNode(-1)), x)
+    }
+    new Expression(rec(expr))
+  }
   def toPowerSeries = {
     def rec(tree: Tree[MathNode]): Tree[MathNode] = {
       tree match {
@@ -28,6 +38,6 @@ class Expression(val expr: Tree[MathNode]) {
       }
       case _ => tree
     }}
-    rec(expr)
+    new Expression(rec(expr))
   }
 }
