@@ -29,6 +29,12 @@ case class NNode[T](val value: T, cons: LNode[Tree[T]]) extends Tree[T] {
   def twoFold[A](accu: A, fun: (T, A, A) => A) = accu // a reparer
 }
 
+case object Node {
+  def apply[T](value: T) = new Node(value, Nill, Nill)
+  def apply[T](value: T, left: Tree[T]) = new Node(value, left, Nill) 
+//  def apply[T](value: T, left: Tree[T], right: Tree[T]) = new Node(value, left, right)
+}
+
 case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
 
   def this(value: T) = this(value, Nill, Nill)
@@ -61,7 +67,7 @@ class LNode[T](val value: T, cons: Option[LNode[T]]) {
     case None => new LNode(value, Some(toAppend)) }
 }
 
-object LNode {
+case object LNode {
   def apply[T](value: T, cons: LNode[T]): LNode[T] = new LNode(value, Some(cons))
   def apply[T](value: T, cons: Seq[T]): LNode[T] = cons.toList match { case Nil => new LNode(value, None) case x :: Nil => new LNode(value, Some(new LNode(x, None))) case x :: xs => new LNode(value, Some(this(x, xs))) }
   def apply[T](value: T*): LNode[T] = this(value.head, value.tail)

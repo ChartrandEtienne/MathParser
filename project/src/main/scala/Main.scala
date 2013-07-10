@@ -8,9 +8,11 @@ object Main extends App {
     for(line <- Source.fromFile("expr").getLines()) {
       println("\n\tsource:\t" + line)  
       var exprTree = new Expression(p.apply(line).toTree)
-      println("\tarbre:\t" + exprTree.toString)
-      var powerSerie = exprTree.toPowerSeries
-      println("\tpower:\t" + powerSerie.toString + "\n")
+      println("\ttree:\t" + exprTree.toString)
+      var powerSerie = exprTree.toFlatten
+      println("\tflat:\t" + powerSerie.toString)
+      println("\tpower:\t" + powerSerie.isPowerSeries)
+      println("\tvariables:\t" + powerSerie.getVariables + "\n")
     }
   } catch {
     case e => println("what the flying fuck: " + e.getMessage)

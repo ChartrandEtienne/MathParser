@@ -1,6 +1,6 @@
 package parsing
 import scala.util.matching.Regex
-import java.util.regex.Pattern
+// import java.util.regex.Pattern
 import scala.util.parsing.combinator.RegexParsers
 import math.{pow, sqrt, cbrt}
 import scala.collection.mutable.Queue
@@ -10,8 +10,9 @@ class MathLexer extends RegexParsers {
   def posNumber: Parser[String] = regex(new Regex("[0-9]+")) // " 
   def number = posNumber // | negNumber
   def variable: Parser[String] = regex(new Regex("[a-z]")) // "
-  def operator: Parser[String] = regex(new Regex("[/*/^//+-]")) | "rt"  //"
-  def exprLex = rep(number | variable | operator)
+//  def operator: Parser[String] = regex(new Regex("[/*/^+-]")) | "rt" //"
+  def operator: Parser[String] = "+" | "-" | "/" | "*" | "|" | "^" | "rt"
+  def exprLex = rep(operator | number | variable)
   def openParens: Parser[String] = "("
   def closeParens: Parser[String] = ")"
   def applyLex(input: String): List[String] = parse(exprLex, input) match {
@@ -38,22 +39,26 @@ object p extends MathLexer {
       case 1 =>
         "+" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "+")}|
         "-" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "-")}
+//        "" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "*")}
       case 2 => 
-        "*" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "*")}|
-        "" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "*")}|
-        "/" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "/")}
+        "|" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "/")}
       case 3 => 
+        "*" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "*")}|
+        "" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "*")}
+      case 4 => 
+        "/" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "/")}
+      case 5 => 
         "^" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "^")}|
         "rt" ^^^ {(a: MathNode, b: MathNode) => BinOpNode(a, b, "rt")}
       case _ => throw new RuntimeException("bad precedence")
     }
   }
   val minPrec = 1
-  val maxPrec = 3
+  val maxPrec = 5
   def binary(level: Int): Parser[MathNode] = 
     if (level > maxPrec) term
     else binary(level+1) * binaryOp(level)
-  def expr = binary(minPrec) | term
+  def expr = binary(minPrec) | term 
   def apply(input: String): MathNode = parse(expr, input) match {
     case Success(result, _) => result
     case failure: NoSuccess => {println(failure.msg); NumeralNode(-1)}

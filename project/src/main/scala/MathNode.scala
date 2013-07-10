@@ -50,6 +50,7 @@ case class NumeralNode(value: Int) extends MathNode {
   def toFlatten(x: MathNode) = (false, (false, false))
 }
 
+
 case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNode {
   override def toString = op
 //  def toString2 = 
