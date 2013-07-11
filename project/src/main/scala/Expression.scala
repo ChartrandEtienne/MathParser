@@ -2,13 +2,38 @@ package parsing
 
 class Expression(val expr: Tree[MathNode]) {
   override def toString = expr.toString
+  def eval: Expression = eval(Map())
+  def eval(valeurVariables: Map[String, Int]): Expression = {
+    def rec(tree: Tree[MathNode]): Tree[MathNode] = tree match {
+      case a @ Node(x: NumeralNode, _, _) => a
+      case a @ Node(VariableNode(x), _, _) => valeurVariables.get(x) match {
+        case Some(numeral) => new Node(NumeralNode(numeral))
+        case None => a
+      }
+      case Node(bop: BinOpNode, left, right) => {
+        (rec(left), rec(right)) match {
+          case (Node(leftnum: NumeralNode, _, _), Node(rightnum: NumeralNode, _, _)) => new Node(bop.apply(leftnum, rightnum))
+          case _ => Node(bop, rec(left), rec(right))
+        }
+      }
+/*
+      case NNode(bop: BinOpNode, cons: LNode) => {
+        cons.lfoldr(
+      } 
+*/
+      case _ => tree
+    }
+    new Expression(rec(expr))
+  }
   def getVariables: List[VariableNode] = {
     def rec(tree: Tree[MathNode]): List[VariableNode] = tree match {
       case Node(x: VariableNode, _, _) => x :: Nil
       case Node(a: BinOpNode, x, y) => rec(x) ::: rec(y)
+//      case NNode(a: BinOpNode, cons) => cons.lfoldr(Nil, {(x: Tree[MathNode], y: List[VariableNode]) => rec(x) :: y})
+      case NNode(a: BinOpNode, cons) => cons.lfoldr(Nil, {(x: Tree[MathNode], y: List[VariableNode]) => rec(x) ::: y})
       case _ => Nil
     }
-    rec(expr)
+    rec(expr).distinct
   }
   def isPowerSeries: Boolean = {
     def rec(tree: Tree[MathNode]): Boolean = tree match {
@@ -19,7 +44,6 @@ class Expression(val expr: Tree[MathNode]) {
       case Node(BinOpNode(_, _, "*"), Node(x: NumeralNode, _, _), Node(BinOpNode(_, _, "^"), Node(a: VariableNode, _, _), Node(b: NumeralNode, _, _))) => true
       case NNode(BinOpNode(_, _, "+"), x: LNode[Tree[MathNode]]) => x.lfoldr(true, {(y: Tree[MathNode], x: Boolean) => x & rec(y)})
       case Node(BinOpNode(_, _, "+"), x @ Node(a: MathNode, _, _), y @ Node(b: MathNode, _, _)) => {
-        println("wot")
         rec(y) & rec(x)
       }      
       case _ => false
@@ -31,7 +55,6 @@ class Expression(val expr: Tree[MathNode]) {
       case Nill => tree
 //      case Node(bop @ BinOpNode(_, _, "*"), Node(x: MathNode, _, _), Node(y: MathNode, _, _)) => {
       case Node(bop @ BinOpNode(_, _, "*"), Node(NumeralNode(x: Int), _, _), Node(y: MathNode, _, _)) => {
-        println("mult")
         Node(bop, Node(NumeralNode(0 - x)), Node(y))
       }
 //      case Node(bop @ BinOpNode("*"), Node(NumeralNode(numeral: Int), _, _), right) => new Node(bop, Node(NumeralNode(0 - numeral)), right)

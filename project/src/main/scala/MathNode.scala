@@ -57,6 +57,22 @@ case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNo
 //    "bop(" + op + " " + left.toString2 + " " + right.toString2 + ")"
 //  def toString3 = "(  " + op + "  )"
 
+  def apply(leftargnode: NumeralNode, rightargnode: NumeralNode): NumeralNode = {
+    val (NumeralNode(leftarg), NumeralNode(rightarg)) = (leftargnode, rightargnode)
+    NumeralNode(op match {
+      case "+" => leftarg + rightarg
+      case "-" => leftarg - rightarg
+      case "*" => leftarg * rightarg
+      case "/" => leftarg / rightarg
+      case "^" => pow(leftarg, rightarg).toInt
+      case "rt" => leftarg match {
+        case 1 => rightarg
+        case 2 => sqrt(rightarg).toInt
+        case 3 => cbrt(rightarg).toInt // enfin bon
+      }
+    })
+  }
+
   def this(value: String) = this(NullNode, NullNode, value)
 
   def toQueue(level: Int, shift: Int) = (this, level, shift) :: left.toQueue(level + 1, shift - 1) ::: right.toQueue(level + 1, shift + 1)

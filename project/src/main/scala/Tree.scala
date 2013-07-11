@@ -62,6 +62,7 @@ class LNode[T](val value: T, cons: Option[LNode[T]]) {
   def toString2 = this.lfoldr("", {(x: T, y: String) => x.toString + ", " + y})
   def lmap[A](f: (T) => A): LNode[A] = cons match { case Some(x) => new LNode(f(value), Some(x.lmap(f))) case None => new LNode(f(value), None) }
   def lfoldr[A](accu: A, f: (T, A) => A): A = cons match { case Some(x) => f(value, x.lfoldr(accu, f)) case None => f(value, accu) }
+  def lreducer(f: (T, T) => T): T = cons match { case None => value case Some(x) => x.lfoldr(value, f)}
   def append(toAppend: LNode[T]): LNode[T] = cons match { 
     case Some(x) => new LNode(value, Some(x.append(toAppend))) 
     case None => new LNode(value, Some(toAppend)) }
