@@ -12,17 +12,73 @@ class Expression(val expr: Tree[MathNode]) {
       }
       case Node(bop: BinOpNode, left, right) => {
         (rec(left), rec(right)) match {
-          case (Node(leftnum: NumeralNode, _, _), Node(rightnum: NumeralNode, _, _)) => new Node(bop.apply(leftnum, rightnum))
-          case _ => Node(bop, rec(left), rec(right))
+          case (Node(leftnum: NumeralNode, _, _), Node(rightnum: NumeralNode, _, _)) => {
+            println("Node")
+            println(leftnum + ", " + rightnum)
+            new Node(bop.apply(leftnum, rightnum))
+          }
+          case (x, y) => {
+            println("wot")
+            println(x + ", " + y)
+            Node(bop, x, y)
+          }
+          case _ => {
+            println("nope")
+            Node(bop, rec(left), rec(right))
+          }
         }
       }
+      case NNode(bop: BinOpNode, cons: LNode[Tree[MathNode]]) => {
+        println("NNode1")
+        val result = cons.lmap(rec).lfoldr(List[Tree[MathNode]](), {(value: Tree[MathNode], seed: List[Tree[MathNode]]) => (value, seed) match {
+          case (x @ Node(number2: NumeralNode, _, _), num @ Node(number: NumeralNode, _, _) :: y) => {
+            println("number3: " + x + " || " + number + " || " + y)
+            new Node(bop.apply(number2, number2)) :: y
+          }
+          case (x, num @ Node(number: NumeralNode, _, _) :: y) => {
+            println("number2: " + x + " || " + number + " || " + y)
+            Node(number) :: x :: y
+          }
+          case (Node(number: NumeralNode, _, _), y) => {
+            println("number: " + number + " || " + y)
+            Node(number) :: y
+          }
+          case (x, y) => {
+            println("wut: " + x + " || " + y)
+            x :: y
+          }
+          
+        }})
+        new NNode(bop, LNode(result.head, result.tail))
+      }
 /*
-      case NNode(bop: BinOpNode, cons: LNode) => {
-        cons.lfoldr(
-      } 
+      case NNode(bop: BinOpNode, cons: LNode[Tree[MathNode]]) => {
+        println("NNode1")
+        cons.lreducer({(accu: Tree[MathNode], iter: Tree[MathNode]) => (rec(iter), rec(accu)) match {
+          case (x @ Node(wat: NumeralNode, _, _), y @ Node(wut: NumeralNode, _, _)) => {
+            println("NNode")
+            println(x + ", " + y)
+            Node(bop.apply(wat, wut))
+          }
+          case (x @ Node(wat: BinOpNode, _, _), y @ Node(wut: NumeralNode, _, _)) => {
+            println("wot6")
+            println(x + " || " + y)
+            println(wat == bop)
+//            println(wit)
+            Node(bop, y, x)
+          }
+          case (x, y) => {
+            println("wot4")
+            println(x + ", " + y)
+            Node(bop, x, y)
+          }
+// rrrrrhhhhaaaaahhhhhh please kill me
+        }})
+      }
 */
       case _ => tree
     }
+//    new Expression(rec(expr)).toFlatten
     new Expression(rec(expr))
   }
   def getVariables: List[VariableNode] = {
