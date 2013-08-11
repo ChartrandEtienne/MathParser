@@ -12,8 +12,7 @@ object Main extends App {
       var powerSerie = exprTree.toFlatten
       println("\tflat:\t" + powerSerie.toString)
       println("\tpower:\t" + powerSerie.isPowerSeries)
-      println("\tvars:\t" + powerSerie.getVariables.mkString(", "))
-      println("\teval:\t" + powerSerie.eval(Map("x" -> 4))+ "\n")
+      println("\teval:\t" + powerSerie.simplify)
       
     }
   } catch {

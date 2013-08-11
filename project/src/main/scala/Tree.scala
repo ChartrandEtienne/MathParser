@@ -57,7 +57,7 @@ case class Node[T](val value: T, left: Tree[T], right: Tree[T]) extends Tree[T] 
 
   
 
-class LNode[T](val value: T, cons: Option[LNode[T]]) {
+class LNode[T](val value: T, val cons: Option[LNode[T]]) {
   override def toString = "(" + this.lfoldr("", {(x: T, y: String) => x.toString + ", " + y}) + ")"
   def toString2 = this.lfoldr("", {(x: T, y: String) => x.toString + ", " + y})
   def lmap[A](f: (T) => A): LNode[A] = cons match { case Some(x) => new LNode(f(value), Some(x.lmap(f))) case None => new LNode(f(value), None) }
@@ -70,6 +70,10 @@ class LNode[T](val value: T, cons: Option[LNode[T]]) {
 
 case object LNode {
   def apply[T](value: T, cons: LNode[T]): LNode[T] = new LNode(value, Some(cons))
+  def unapply[T](x: LNode[T]) = x.cons match {
+    case Some(some) => Some((x.value, some))
+    case None => None
+  }
   def apply[T](value: T, cons: Seq[T]): LNode[T] = cons.toList match { case Nil => new LNode(value, None) case x :: Nil => new LNode(value, Some(new LNode(x, None))) case x :: xs => new LNode(value, Some(this(x, xs))) }
   def apply[T](value: T*): LNode[T] = this(value.head, value.tail)
 }
