@@ -48,6 +48,7 @@ case class NumeralNode(value: Int) extends MathNode {
   def +(that: NumeralNode) = NumeralNode(that.value + this.value)
   def -(that: NumeralNode) = NumeralNode(that.value - this.value)
   def toFlatten(x: MathNode) = (false, (false, false))
+  def negate = NumeralNode(0 - value)
 }
 
 
