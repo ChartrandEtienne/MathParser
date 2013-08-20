@@ -53,10 +53,11 @@ case class NumeralNode(value: Int) extends MathNode {
 
 
 case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNode {
-  override def toString = op
+//  override def toString = op
 //  def toString2 = 
 //    "bop(" + op + " " + left.toString2 + " " + right.toString2 + ")"
-//  def toString3 = "(  " + op + "  )"
+
+  override def toString = "(  " + op + "  )"
 
   def apply(leftargnode: NumeralNode, rightargnode: NumeralNode): NumeralNode = {
     val (NumeralNode(leftarg), NumeralNode(rightarg)) = (leftargnode, rightargnode)

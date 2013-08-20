@@ -1,9 +1,9 @@
 package parsing
 
-class Real(val num: Int, val denom: Int) {
+class Real(val num: BigInt, val denom: BigInt) {
   override def toString = if (denom == 1) num.toString else num + "/" + denom
-  def create(x: Int, y: Int): (Int, Int) = {
-    def gcd(a: Int, b: Int): Int = if (a % b == 0) b else gcd(b, a % b)
+  def create(x: BigInt, y: BigInt): (BigInt, BigInt) = {
+    def gcd(a: BigInt, b: BigInt): BigInt = if (a % b == 0) b else gcd(b, a % b)
     val z = gcd(x, y)
     (x / z, y / z)
   }
@@ -42,21 +42,29 @@ class Real(val num: Int, val denom: Int) {
 
 object Real {
   
-  def create(x: Int, y: Int): (Int, Int) = {
-    def gcd(a: Int, b: Int): Int = if (a % b == 0) b else gcd(b, a % b)
+  def create(x: BigInt, y: BigInt): (BigInt, BigInt) = {
+    def gcd(a: BigInt, b: BigInt): BigInt = if (a % b == 0) b else gcd(b, a % b)
     val z = gcd(x, y).abs
     if (x == 0) (0, 1) else 
     if ((x < 0) && (y < 0)) ((x / z).abs, (y / z).abs)else
     if ((x > 0) && (y < 0)) (-(x / z), -(y / z)) else 
     (x / z, y / z)
   }
-  def apply(x: Int) = new Real(x, 1)
-  def apply(x: Int, y: Int) = new Real(create(x, y)._1, create(x, y)._2)
+  def apply(x: Int) = new Real(BigInt(x), 1)
+  def apply(x: BigInt, y: BigInt) = new Real(create(x, y)._1, create(x, y)._2)
+  def apply(x: Int, y: Int) = new Real(create(BigInt(x), BigInt(y))._1, create(BigInt(x), BigInt(y))._2)
 }
 
 class ExprVec(val expr: List[Real]) {
 
+  override def equals(o: Any): Boolean = o match {
+    case that: ExprVec if (that.expr == expr) => true
+    case _ => false
+  }
+
   def +(that: ExprVec) = new ExprVec(zip1(expr, that.expr, _ + _))  
+
+  def -(that: ExprVec) = new ExprVec(zip1(expr, that.expr, _ - _))  
 
 //  def plus(a: List[Real], b: List[Real]) = zip1(a, b, _ + _)
 
@@ -87,7 +95,6 @@ class ExprVec(val expr: List[Real]) {
 
   def div(a: List[Real], v: List[Real]): (List[Real], List[Real]) = {
     def rec(q: List[Real], r: List[Real]): (List[Real], List[Real]) = {
-//      println("wat")
       val coeff = r.last / v.last
       val deg = r.length - v.length
       val mult = poke(List.fill(deg + 1)(Real(0)), deg, coeff)
@@ -102,10 +109,9 @@ class ExprVec(val expr: List[Real]) {
       println("q1: " + q1.toString)
       println("r1: " + r1.toString)
 */
-//      println("X: " + X.toString)
       if (r1.length < v.length) (q1, r1) else rec(q1, r1)
     }
-    if (a.length <= v.length) (List(Real(0)), a) else {
+    if (a.length < v.length) (List(Real(0)), a) else {
       val res = rec(List.fill(0)(Real(0)), a)
       (res._1, res._2)
     }
@@ -115,15 +121,24 @@ class ExprVec(val expr: List[Real]) {
     val res = div(expr, argument.expr)
     (new ExprVec(res._1), new ExprVec(res._2))
   }
+
  
   def gcdInternal(a: List[Real], b: List[Real]): List[Real] = {
     def rec(x: List[Real], y: List[Real]): List[Real] = {
-      println("x: " + x.toString + " y: " + y.toString)
+//      println("\nx: " + x.toString + " y: " + y.toString)
       (x, y) match {
       case (x: List[Real], Nil) => x
-      case (x: List[Real], y: List[Real]) => rec(y, div(x, y)._2)
+      case (x: List[Real], y: List[Real]) => {
+//        println("(x, y): \t" + (x, y))
+//        println("div (x, y): \t" + div(x, y))
+        val divres = div(x, y)
+        if (divres._1 == List(Real(0))) List(Real(1)) else rec(y, divres._2)
+//        rec(y, div(x, y)._2)
+      }
     }}
-    if (a.length < b.length) rec(b, a) else rec(a, b)
+    val res = if (a.length < b.length) rec(b, a) else rec(a, b)
+    res.map(_ / res.last)
+//    rec(a, b)
   } 
 
   def gcd(that: ExprVec) = new ExprVec(gcdInternal(expr, that.expr))
@@ -144,7 +159,7 @@ class ExprVec(val expr: List[Real]) {
 // enfin bonne nuit. 
 /*
   def factoInternal(expr: List[Real]): List[List[Real]] = {
-    val u = factoInternal(expr.map(_ / expr.last))
+    val u = expr.map(_ / expr.last)
     val p = List(Real(1))
     val r = u / u.deriv
     val f = u / r
@@ -158,25 +173,27 @@ class ExprVec(val expr: List[Real]) {
   
   def poke(x: List[Real], i: Int, value: Real) = x.take(i) ::: x(i) + value :: x.drop(i + 1)
 
-/*
-    def deg(list: List[Real]) = {
-      def neg(x: List[Real], y: Int): Int = x match { case Nil => 0 case x::xs if (x != Real(0)) => y case x :: xs => neg(xs, y - 1) }
-      neg(list, list.length)
-    }
-*/
-
-/*
-  def /(that: ExprVec) = {
-    def rec(q: List[Real], r: List[Real]): (List[Real], List[Real]) = {
-      if (r.length < v.length) (q, r)
-      else {
-        val q1 = 
-      }
-    }
-    new ExprVec(rec(Nil, expr))
-  }
-*/
-
   override def toString = expr.toString
 }
 
+object ExprVec {
+  def wolframTests = {
+    val testCase1 = new ExprVec(List(4, 4, 2).map(Real(_)))
+    val testCase2 = new ExprVec(List(4, 2).map(Real(_)))
+    val testCase3 = new ExprVec(List(2, 1).map(Real(_)))
+//    val testCase4 = testCase1 gcd testCase2
+    val testCase5 = new ExprVec(List(4, 0, -2, 0, 0, -4, 0, 1).map(Real(_)))
+    val testCase6 = new ExprVec(List(4, 0, -2, -4, 0, 1).map(Real(_)))
+    val testCase7 = testCase6 gcd testCase5
+    //  x7 - 4 x5 - x2 + 4 and v = x5 - 4 x3 - x2 + 4. T
+//     println("testCase3: " + testCase3)
+//     println("testCase4: " + testCase4)
+    println("testCase5: " + testCase5)
+    println("testCase6: " + testCase6)
+    println("testCase7: " + testCase7)
+    
+
+//    println("test 1: gcd " + ((testCase1 gcd testCase2 == new ExprVec(List(2, 1).map(Real(_))))).toString)
+    println("test 1: gcd " + (testCase1 gcd testCase2) == testCase3)
+  }
+}

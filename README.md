@@ -3,6 +3,8 @@ MathParser
 
 Algebra expression in, pretty-printed algebra expression out. 
 
+(new branch here)
+
 Well, for now. In the near future, I'd like this thing to out say the solutions, the derivative, the integration, the fourrier transform, I don't know. Things. 
 
 It's now a proper SBT project. Just jump into the "project" folder and run your favourite sbt command, that is if your sbt all-time favourite is "run".
