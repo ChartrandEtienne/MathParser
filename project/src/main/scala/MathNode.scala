@@ -1,26 +1,20 @@
 package parsing
 import math.{pow, sqrt, cbrt}
 
-abstract class MathNode {
-  def eval(): Double
-  def eval(valeurVariables: Map[String, Double]): Double
+trait MathNode {
+  def eval(): Number 
+  def eval(valeurVariables: Map[String, Number]): Number 
   def toFlatten(x: MathNode): (Boolean, (Boolean, Boolean))
 }
 
-case object NullNode extends MathNode {
-
-
-  def eval() = 0.0
-  def eval(valeurVariables: Map[String, Double]) = 0.0
-  override def toString = ""
-  def toFlatten(x: MathNode) = (false, (false, false))
-}
-
-
-case class VariableNode(value: String) extends MathNode {
-  def eval(): Double = eval(Map())
+case class VariableNode(val value: String) extends MathNode {
   override def toString = value.toString
-  def eval(valeurVariables: Map[String, Double]) = 
+  override def equals(o: Any) = o match {
+    case VariableNode(x) if (x == value) => true
+    case _ => false
+  }
+  def eval(): Number = eval(Map())
+  def eval(valeurVariables: Map[String, Number]) = 
     try {
       valeurVariables(value)
     } catch {
@@ -30,42 +24,76 @@ case class VariableNode(value: String) extends MathNode {
 }
 
 
-case class NumeralNode(value: Int) extends MathNode {
+
+case class NumeralNode(val value: Number) extends MathNode {
   override def toString = value.toString
-  def eval(): Double = eval(Map())
-  def eval(valeurVariables: Map[String, Double]) = value.toDouble
+  override def equals(o: Any) = o match {
+    case NumeralNode(x) if (x == value) => true
+    case _ => false
+  }
+  def eval(): Number = eval(Map())
+  def eval(valeurVariables: Map[String, Number]) = value
   def +(that: NumeralNode) = NumeralNode(that.value + this.value)
   def -(that: NumeralNode) = NumeralNode(that.value - this.value)
   def toFlatten(x: MathNode) = (false, (false, false))
-  def negate = NumeralNode(0 - value)
+  def negate = NumeralNode(Real(0) - value)
+  def invert = value match {
+    case Real(x, y) => NumeralNode(Real(y, x))
+    case Float(x) => NumeralNode(Float(1 / x))
+  }
 }
 
+class AssOpNode(val op: String, val args: List[MathNode]) extends MathNode {
+  override def toString = "[" + op + " " + args.mkString(", ") + "]"
 
-case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNode {
+  def eval(valeurVariables: Map[String, Number]) = {
+    val argsEval = args.map(_.eval(valeurVariables))
+    op match {
+      case "+" => argsEval.reduceLeft(_ + _)
+      case "*" => argsEval.reduceLeft(_ * _)
+      case _ => {
+        throw new RuntimeException("operateur incorrect: " + op)
+        Real(0)
+      }
+    }
+  } 
+
+  def toFlatten(x: MathNode) = x match {
+    
+    case BinOpNode(_, _, lop) if ((op == "+")|(op == "-")) & ((lop == "+")|(lop == "-")) => (true, ((op == "-"), (lop == "-")))
+    case BinOpNode(_, _, lop) if ((op == "*") && (lop == "*")) => (true, (false, false))
+    case _ => (false, (false, false))
+  }
+
+  def eval(): Number = eval(Map())
+
+}
+
+object AssOpNode {
+  def apply(op: String, args: List[MathNode]) = args match {
+    case x :: y :: Nil => new BinOpNode(op, x, y)
+    case x: List[MathNode] => new AssOpNode(op, x)
+  }
+  def unapply(x: MathNode) = x match {
+    case x: AssOpNode => Some((x.op, x.args))
+    case x: BinOpNode => Some((x.op, x.left :: x.right :: Nil))
+    case _ => None
+  }
+}
+
+object BinOpNode {
+  def apply(op: String, left: MathNode, right: MathNode) = new BinOpNode(op, left, right)
+  def unapply(x: BinOpNode) = Some((x.op, x.left, x.right))
+}
+
+class BinOpNode(val op: String, val left: MathNode, val right: MathNode) extends MathNode {
 //  override def toString = op
 //  def toString2 = 
 //    "bop(" + op + " " + left.toString2 + " " + right.toString2 + ")"
-  override def toString = "(" + left.toString + " " + op + " " + right.toString + ")"
+//  override def toString = "(" + left.toString + " " + op + " " + right.toString + ")"
+    override def toString = "(" + op + ", " + left.toString + ", " + right.toString + ")"
 
-  def apply(leftargnode: NumeralNode, rightargnode: NumeralNode): NumeralNode = {
-    val (NumeralNode(leftarg), NumeralNode(rightarg)) = (leftargnode, rightargnode)
-    NumeralNode(op match {
-      case "+" => leftarg + rightarg
-      case "-" => leftarg - rightarg
-      case "*" => leftarg * rightarg
-      case "/" => leftarg / rightarg
-      case "^" => pow(leftarg, rightarg).toInt
-      case "rt" => leftarg match {
-        case 1 => rightarg
-        case 2 => sqrt(rightarg).toInt
-        case 3 => cbrt(rightarg).toInt // enfin bon
-      }
-    })
-  }
-
-  def this(value: String) = this(NullNode, NullNode, value)
-
-  def eval(valeurVariables: Map[String, Double]) = { 
+  def eval(valeurVariables: Map[String, Number]) = { 
     val leftEval = left.eval(valeurVariables)
     val rightEval = right.eval(valeurVariables)
     op match {
@@ -73,23 +101,25 @@ case class BinOpNode(left: MathNode, right: MathNode, op: String) extends MathNo
       case "-" => leftEval - rightEval
       case "*" => leftEval * rightEval
       case "/" => leftEval / rightEval
-      case "^" => pow(leftEval, rightEval)
+      
+      case "^" => Real(43)
+//      case "^" => pow(leftEval, rightEval)
+      case "rt" => Real(42)
+/*
       case "rt" => leftEval match {
         case 1 => rightEval
         case 2 => sqrt(rightEval)
         case 3 => cbrt(rightEval)
       }
+*/
     } 
   }
-  def eval(): Double = eval(Map())
+  def eval(): Number = eval(Map())
   def toFlatten(x: MathNode) = x match {
     
     case BinOpNode(_, _, lop) if ((op == "+")|(op == "-")) & ((lop == "+")|(lop == "-")) => (true, ((op == "-"), (lop == "-")))
-//    case BinOpNode(_, _, lop) if ((op == "+") && (lop == "+")) => (true, (false, false))
-//    case BinOpNode(_, _, lop) if ((op == "-") && (lop == "+")) => (true, (false, true))
-//    case BinOpNode(_, _, lop) if ((op == "+") && (lop == "-")) => (true, (true, false))
-//    case BinOpNode(_, _, lop) if ((op == "-") && (lop == "-")) => (true, (true, true))
     case BinOpNode(_, _, lop) if ((op == "*") && (lop == "*")) => (true, (false, false))
     case _ => (false, (false, false))
   }
 }
+
